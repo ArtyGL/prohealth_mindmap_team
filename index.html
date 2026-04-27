@@ -217,6 +217,22 @@ function createNode(item, depth=0){
         });
       } else {
         children.forEach(child => child.classList.remove('reveal'));
+
+        // Когда закрываем любой блок, полностью сворачиваем всё открытое внутри него.
+        // Поэтому при повторном раскрытии ветка открывается чисто, без старых вложенных раскрытий.
+        ul.querySelectorAll('.children').forEach(nestedUl => {
+          const nestedLi = nestedUl.parentElement;
+          const nestedToggle = nestedLi ? nestedLi.querySelector(':scope > .node-row .toggle') : null;
+
+          if (nestedToggle && !nestedToggle.classList.contains('hidden')) {
+            nestedToggle.innerHTML = '<span class="sym">+</span>';
+          }
+          if (nestedLi) nestedLi.dataset.open = '0';
+
+          [...nestedUl.children].forEach(child => child.classList.remove('reveal'));
+          nestedUl.classList.remove('open');
+        });
+
         ul.classList.remove('open');
       }
     };
